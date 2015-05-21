@@ -1,0 +1,12 @@
+body{
+    text-align: center;
+}
+
+input {
+    float: none;
+    margin: 0 auto;
+}
+
+img {
+    width: 10%
+}
