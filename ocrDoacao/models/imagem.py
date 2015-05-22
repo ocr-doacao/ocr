@@ -15,7 +15,6 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.db import IntegrityError
 
-
 class Imagem(models.Model):
     PREPROCESSAMENTO = 1
     PROCESSAMENTO = 2
@@ -45,7 +44,6 @@ class Imagem(models.Model):
         self.path = os.path.join(self.path, "img" + fext)
         path = default_storage.save(os.path.join(complete_path, "img" + fext), ContentFile(content))
         os.path.join(settings.MEDIA_ROOT, path)
-        print complete_path
         try:
             return super(Imagem, self).save()
         except IntegrityError as e:
