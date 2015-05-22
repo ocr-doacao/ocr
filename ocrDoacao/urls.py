@@ -18,5 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
+    url(r'^404/?$', 'ocrDoacao.views.erro_404'),
+    url(r'^ong/(?P<ongname>\w{0,50})/?$', 'ocrDoacao.views.ong_page'),
     url(r'^$', 'ocrDoacao.views.index'),
 ]

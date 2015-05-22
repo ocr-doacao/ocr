@@ -3,15 +3,12 @@
 <html lang="pt-br">
     <head>
         <meta charset="utf-8">
-        <title>ConnectedIn</title>
+        <title>OCR - Doação</title>
     </head>
     <body>
-        <h1>Bem-vindo ao Connectedin</h1>
-        <form>
-            <label>Data:
-            </label>
-                <input type="text">
-            <label>nome: {{nome}}</label>
-        </form>
+        <h1>Bem-vindo ao OCR - Doação</h1>
+        {% for o in onglist %}
+            <a href="ong/{{ o.nome }}/">{{ o.nome }}</a><br />
+        {% endfor %}
     </body>
 </html>
