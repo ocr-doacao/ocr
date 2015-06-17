@@ -13,20 +13,16 @@
 <body>
 <div class="container">
     <div class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="#">Home</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">OCR Doação  - {{ nf.imagem.ong.nome }}<br />Restam {{ count }}</h3>
+        <h1>{{ nf.imagem.ong.nome }}</h1>
+        <p>Cupons restantes: {{ count }}</p>
     </div>
-    <div class="col">
+    <div id="notafiscal" class="col">
         <fieldset>
             <legend>Cupom Fiscal</legend>
             <img id="notaFiscal" src="/static/ongs/{{ nf.imagem.ong.nome }}/{{ nf.imagem.path }}">
         </fieldset>
     </div>
-    <div class="col">
+    <div id="dados" class="col">
         <form role="form" action="" method="post" class="form">
             {% csrf_token %}
             <fieldset>
@@ -38,36 +34,123 @@
                     <label for="cnpj">CNPJ:</label>
                     <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder=""
                            value="{{ nf.cnpj }}" >
+                    <p class="validation_error"></p>
                 </div>
                 <div class="form-group">
                     <label for="coo">COO:</label>
                     <input type="text" class="form-control" id="coo" name="coo" value="{{ nf.coo }}" >
+                    <p class="validation_error"></p>
                 </div>
                 <div class="form-group">
                     <label for="valor">Valor:</label>
                     <input type="text" class="form-control" id="valor" name="total" value="{{ nf.total }}" >
+                    <p class="validation_error"></p>
                 </div>
                 <div class="form-group">
                     <label for="data">Data:</label>
                     <input type="text" class="form-control" id="data" name="data" value="{{ data }}" >
+                    <p class="validation_error"></p>
                 </div>
                 <div id="erro" class="form-group"></div>
                 <button type="submit" class="btn btn-primary"><b>Confirmar</b></button>
             </fieldset>
         </form>
     </div>
-    <div class="col">
-        <fieldset>
-            <legend>Resultado</legend>
-            <div class="form-group">
-                <label for="resultado">Resultado:</label>
-                <textarea name="resultado" class="form-control" id="resultado" cols="20" rows="15"></textarea>
-            </div>
-        </fieldset>
-    </div>
 </div>
 <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/jquery.mask.min.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/error.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/validator.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var msg_errors = {};
+        msg_errors['#cnpj'] = '* CNPJ inválido.';
+        msg_errors['#coo'] = '* COO inválido.';
+        msg_errors['#data'] = '* Data inválida.';
+        msg_errors['#valor'] = '* Valor inválido.';
+        
+        var validation_functions = {};
+        validation_functions['#cnpj'] = validaCNPJ;
+        validation_functions['#coo'] = validaCOO;
+        validation_functions['#data'] = validaData;
+        validation_functions['#valor'] = validaValor;
+        
+        $.fn.extend({
+            getId: function () {
+                return '#' + $(this).attr('id');
+            },
+            showError: function () {
+                var id = $(this).getId(); 
+                $(id).addValidationClass('has-error');
+                $(id + ' + p').text(msg_errors[id]);
+           },
+           showSuccess: function () {
+                var id = $(this).getId(); 
+                $(id).addValidationClass('has-success');
+                $(id + ' + p').text('');
+           },
+           addValidationClass: function (validationClass) {
+               $(this).closest('.form-group').addClass(validationClass);
+           },
+           removeValidationClass: function (validationClass) {
+               $(this).closest('.form-group').removeClass(validationClass);
+           }
+        });
+        
+        $('form').submit(function (e) {
+            var cnpj, valor, coo, data;
+            var notaValida = true;
+            cnpj = $('#cnpj').val();
+            coo = $('#coo').val();
+            valor = $('#valor').val();
+            data = $('#data').val();
+            
+            $('.form-group p').text('');
+            $('.form-group').removeClass('has-error').removeClass('has-success');
+            if (!validaCNPJ(cnpj)) {
+                $('#cnpj').showError();
+                notaValida = false;
+            } else {
+                $('#cnpj').showSuccess();
+            }
+            if (!validaCOO(coo)) {
+                $('#coo').showError();
+                notaValida = false;
+            } else {
+                $('#coo').showSuccess();
+            }
+            if (!validaData(data)) {
+                $('#data').showError();
+                notaValida = false;
+            } else {
+                $('#data').showSuccess();
+            }
+            if (!validaValor(valor)) {
+                $('#valor').showError();
+                notaValida = false;
+            } else {
+                $('#valor').showSuccess(); 
+            }
+            if (!notaValida) {
+                e.preventDefault();
+            }            
+        });
+        
+        $('input[type=text]').focusout(function () {
+            var element_value = $(this).val();
+            var id = $(this).getId();
+            var validation_function = validation_functions[id];
+            $(this).removeValidationClass('has-success');
+            $(this).removeValidationClass('has-error');
+            if (!validation_function(element_value)) {
+                $(this).showError();
+            } else {
+                $(this).showSuccess();
+            }
+        });
+
+    });
+    
+</script>
 </body>
 </html>

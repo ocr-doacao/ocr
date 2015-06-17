@@ -1,5 +1,6 @@
 {% load static from staticfiles %}
 <!doctype html>
+<html>
 <head>
     <title>Doação</title>
     <meta charset="utf8">
@@ -12,30 +13,23 @@
     <script src="{% static 'js/preload.js' %}" type="text/javascript"></script>
 </head>
 <body>
-
-<div class="jumbotron">
     <div class="container">
-        <h2>Envie uma Imagem</h2>
+        <div class="center">
+            <img src="{% static 'imagem/camera.svg' %}" id="upfile1" style="cursor:pointer" />
+            <h2>Envie uma Imagem</h2>
+        </div>
+        <div id="preview_photo_container" class="hidden">
+            <img src="#" id="preview_photo">
+            <form action="" method=post enctype=multipart/form-data>
+                {% csrf_token %}
+                <input type="file" id="file1"  name="file1" style="display:none" />
+                <div class="form-group">
+                    <input type="button" id="alterar" value="Alterar imagem" class="btn btn-success">
+                    <input type="submit" id="enviar" value="Enviar" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="container">
-        <form action="" method=post enctype=multipart/form-data>
-            {% csrf_token %}
-            <div class	="row">
-                <fieldset>
-                    <div class="form-group">
-                        <img src="{% static 'imagem/camera.svg' %}" id="upfile1" style="cursor:pointer" />
-                        <input type="file" id="file1"  name="file1" style="display:none" />
-                        <img src="#" id="preview_photo" alt="your image" class="hidden">
-                    </div>
-                    <div class="form-group">
-                        <input type=submit id="enviar" value=Enviar class="btn btn-primary hidden">
-                    </div>
-                </fieldset>
-            </div>
-        </form>
-    </div>
-</div>
-<div class="loading"></div>
+    <div class="loading"></div>
 </body>
-
-<script src="{% static 'js/preload.js' %}" type="text/javascript"></script>
+</html>
