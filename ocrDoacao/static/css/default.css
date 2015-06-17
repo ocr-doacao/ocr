@@ -1,4 +1,6 @@
-body{
+body, html {
+    margin: 0;
+    height: 100%;
     text-align: center;
 }
 
@@ -8,5 +10,65 @@ input {
 }
 
 img {
-    width: 10%
+    max-height: 100%;
+    max-width: 100%;
+    margin: 10px auto;
+}
+
+#preview_photo_container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 85%;
+    width: 90%;
+}
+
+@media screen and (max-width: 480px) {
+    #preview_photo_container {
+        position: absolute;
+        left: 15%;
+        top: 0%;
+        transform: translate(-50%, -50%);
+        height: 75%;
+        width: 70%;
+    }
+}
+
+.container {
+    height: 100%;
+    position: relative;
+}
+
+.center {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (min-width: 768px) {
+    .center {
+        top: 40%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .center {
+        top: 50%;
+    }
+    
+    .btn {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 480px){
+    .center{
+        top:25%;
+        left:10%;
+    }
+    .btn{
+        font-size: 20px;
+    }
+    
 }
