@@ -7,16 +7,17 @@ from django.db import IntegrityError
 
 def upload_image(request, ong):
     i = Imagem()
+    
     try:
         i.save(fd=request.FILES['file1'], ong=ong)
     except IntegrityError:
-        return render(request, 'resposta.html', {'ong': "", 'msg': "Falha ao salvar imagem!"})
+        return render(request, 'ong.html', {'msgF': "Desculpe, essa imagem já foi enviada"})
     nf = NotaFiscal(imagem=i, ong=ong)
     try:
         nf.save()
     except IntegrityError:
-        return render(request, 'resposta.html', {'ong': "", 'msg': "Falha ao salvar nota fiscal!"})
-    return render(request, 'resposta.html', {'ong': "", 'msg': "Imagem salva corretamente!"})
+        return render(request, 'ong.html',  {'msgF': "Falha ao salvar imagem!"})
+    return render(request, 'ong.html', {'msgS': "Obrigado! Sua doação será de grande ajuda!"})
 
 def ong_page(request, ongname):
     try:

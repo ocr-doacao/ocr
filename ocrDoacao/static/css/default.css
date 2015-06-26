@@ -15,6 +15,22 @@ img {
     margin: 10px auto;
 }
 
+.mensagem{
+    position: absolute;
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+}
+
+#mensagemFalha{
+    color: red;
+}
+
+#mensagemSucesso{
+    color: green;
+}
+
 #preview_photo_container {
     position: absolute;
     top: 50%;
@@ -22,17 +38,6 @@ img {
     transform: translate(-50%, -50%);
     height: 85%;
     width: 90%;
-}
-
-@media screen and (max-width: 480px) {
-    #preview_photo_container {
-        position: absolute;
-        left: 15%;
-        top: 0%;
-        transform: translate(-50%, -50%);
-        height: 75%;
-        width: 70%;
-    }
 }
 
 .container {
@@ -43,6 +48,7 @@ img {
 .center {
   position: absolute;
   left: 50%;
+  top: 25%;
   transform: translate(-50%, -50%);
 }
 
@@ -50,25 +56,47 @@ img {
     .center {
         top: 40%;
     }
+    .mensagem{
+        top: 20%;
+    }
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 767px) and (min-width: 321px) {
     .center {
-        top: 50%;
+        top: 45%;
     }
     
-    .btn {
-        font-size: 20px;
+    .mensagem {
+        top: 15%;
+        font-size: 15px;
     }
+    
 }
 
-@media screen and (max-width: 480px){
+@media screen and (max-width: 320px){
     .center{
         top:25%;
         left:10%;
     }
+    
+    .mensagem{
+        text-align: center;
+        top: 10%;
+        left: 10%;
+        right: 10%;
+        font-size: 20px;
+    }
+    
     .btn{
         font-size: 20px;
     }
     
+    #preview_photo_container {
+        position: absolute;
+        left: 15%;
+        top: 0%;
+        transform: translate(-50%, -50%);
+        height: 75%;
+        width: 70%;
+    }
 }
