@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^404/?$', 'ocrDoacao.views.erro_404'),
     url(r'^ong/(?P<ongname>\w{0,50})/cadastro/?$', 'ocrDoacao.views.cadastro_page'),
     url(r'^ong/(?P<ongname>\w{0,50})/?$', 'ocrDoacao.views.ong_page'),
+    url(r'^ong/(?P<ongname>\w{0,50})/invalidar/(?P<nf_id>\d+)/?$', 'ocrDoacao.views.invalida_nota', name='invalida-nota'),
     url(r'^$', 'ocrDoacao.views.index'),
 ]

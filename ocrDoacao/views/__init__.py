@@ -4,7 +4,7 @@
 from ..models import Ong
 from django.shortcuts import render, redirect
 from .imagem import upload_image, ong_page
-from .cadastro import cadastro_page, save_cadastro
+from .cadastro import cadastro_page, save_cadastro, invalida_nota
 
 def index(request):
     o = Ong.objects.all()
