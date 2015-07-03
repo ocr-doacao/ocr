@@ -2,7 +2,6 @@
 # -*- coding: UTF8 -*-
 
 import datetime
-from ..models.notafiscal import busca, pega_query, criterio_busca
 from ..models import Ong, Imagem, NotaFiscal
 from django.shortcuts import render, redirect
 
@@ -16,8 +15,7 @@ def save_cadastro(request):
         return redirect("/ong/" + nf.imagem.ong.nome + "/cadastro/")
     else:
         ong = nf.imagem.ong
-        (start, fday, now) = criterio_busca()
-        count = pega_query(ong, start, fday, now).count()
+        count = NotaFiscal.total_notas_sem_analise(ong)
         data = dados['data']
         return render(request, 'cadastro.html', {'nf': nf, 'count': count,
             'data': data, 'campos_invalidos': campos_invalidos})
@@ -29,9 +27,9 @@ def cadastro_page(request, ongname):
         ong = Ong.objects.get(nome=ongname)
     except Ong.DoesNotExist:
         return redirect('/404/')
-    (count, nf) = busca(ong)
+    (count, nf) = NotaFiscal.busca(ong)
     if count == 0:
-        return render(request, 'resposta.html', {'ong': "", 'msg': "Parabéns, todas as notas foram salvas!"})
+        return render(request, 'resposta.html', {'ong': ong, 'msg': "Parabéns, todas as notas foram salvas!"})
     return render(request, 'cadastro.html', {'nf': nf, 'count': count, 'data': nf.hora_atualizacao.strftime("%d/%m/%Y")})
     
 def validaCadastro(dados):
@@ -52,7 +50,7 @@ def validaCadastro(dados):
 def invalida_nota(request, ongname, nf_id):
     try:
         nf = NotaFiscal.objects.get(id=nf_id)
-        nf.descarta()
+        nf.alteraEstado(NotaFiscal.INVALIDO)
     except NotaFiscal.DoesNotExist:
         pass
     return redirect('/ong/' + ongname + '/cadastro')

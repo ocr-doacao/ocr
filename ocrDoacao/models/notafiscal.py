@@ -9,36 +9,6 @@ from django.db import models
 from .ong import Ong
 from .imagem import Imagem
 
-def criterio_busca():
-    now = datetime.datetime.now()
-    start = now - datetime.timedelta(minutes=1)
-    if now.day < 20:
-        if now.month > 1:
-            fday = datetime.date(now.year, now.month - 1, 1)
-        else:
-            fday = datetime.date(now.year - 1, 12, 1)
-    else:
-        fday = datetime.date(now.year, now.month, 1)
-    return (start, fday, now)
-
-def busca(ong):
-    (start, fday, now) = criterio_busca()
-    q = pega_query(ong, start, fday, now)
-    count = q.count()
-    if count == 0:
-        return (0, None)
-    nf = q.order_by('hora_atualizacao').all()[0]
-    nf.hora_atualizacao = now
-    nf.estado = NotaFiscal.ANALISANDO
-    nf.save()
-    return (count, nf)
-
-def pega_query(ong, start, fday, now):
-    return NotaFiscal.objects.filter(
-        Q(ong=ong, hora_atualizacao__gte=fday, estado=NotaFiscal.SEMANALISE) |
-        Q(ong=ong, hora_atualizacao__gte=fday, hora_atualizacao__lte=start, estado=NotaFiscal.ANALISANDO)
-    )
-
 class NotaFiscal(models.Model):
     SEMANALISE = 1
     ANALISANDO = 2
@@ -171,6 +141,46 @@ class NotaFiscal(models.Model):
         self.data = datetime.datetime.strptime(dados['data'], '%d/%m/%Y').strftime('%Y-%m-%d')
         self.save()
         
-    def descarta(self):
-        self.estado = NotaFiscal.INVALIDO
+    def alteraEstado(self, estado, hora_atualizacao = None):
+        if hora_atualizacao is not None:
+            self.hora_atualizacao = hora_atualizacao
+        self.estado = estado
         self.save()
+    
+    @staticmethod
+    def busca(ong):
+        (start, first_day, now) = NotaFiscal.criterio_busca()
+        notas_sem_analise = NotaFiscal.notas_sem_analise(ong, start, first_day, now)
+        count = NotaFiscal.total_notas_sem_analise(ong, start, first_day, now)
+        if count == 0:
+            return (0, None)
+        nf = NotaFiscal.notas_sem_analise(ong, start, first_day, now).order_by('hora_atualizacao').all()[0]
+        nf.alteraEstado(NotaFiscal.ANALISANDO, now)
+        return (count, nf)
+
+    @staticmethod
+    def criterio_busca():
+        now = datetime.datetime.now()
+        start = now - datetime.timedelta(minutes=1)
+        if now.day < 20:
+            if now.month > 1:
+                first_day = datetime.date(now.year, now.month - 1, 1)
+            else:
+                first_day = datetime.date(now.year - 1, 12, 1)
+        else:
+            first_day = datetime.date(now.year, now.month, 1)
+        return (start, first_day, now)
+
+    @staticmethod
+    def total_notas_sem_analise(ong, start = None, first_day = None, now = None):
+        if (start is None and first_day is None and now is None):
+            (start, first_day, now) = NotaFiscal.criterio_busca()
+        return NotaFiscal.notas_sem_analise(ong, start, first_day, now).count()
+
+    @staticmethod
+    def notas_sem_analise(ong, start, first_day, now):
+        return NotaFiscal.objects.filter(
+            Q(ong=ong, hora_atualizacao__gte=first_day, estado=NotaFiscal.SEMANALISE) |
+            Q(ong=ong, hora_atualizacao__gte=first_day, hora_atualizacao__lte=start, estado=NotaFiscal.ANALISANDO)
+        )
+
